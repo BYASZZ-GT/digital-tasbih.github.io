@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Log In</title>
+  <style>
+    @keyframes bgPulse {
+      0% {
+        background-color: rgb(245, 245, 250);
+      }
+      50% {
+        background-color: rgb(230, 230, 240);
+      }
+      100% {
+        background-color: rgb(245, 245, 250);
+      }
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: rgb(245, 245, 250);
+      color: rgb(50, 50, 50);
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      animation: bgPulse 6s ease-in-out infinite;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    a.button {
+      text-decoration: none;
+      padding: 1rem 2rem;
+      background: rgb(200, 200, 210);
+      color: rgb(40, 40, 40);
+      font-weight: 600;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: background 0.3s ease;
+    }
+    a.button:hover {
+      background: rgb(170, 170, 180);
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to the digital prayer beads application</h1>
+  <p>Click the button below to proceed to the next page.</p>
+  <a href="Select Mode.html" class="button">Go to Next Page</a>
+</body>
+</html>

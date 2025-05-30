@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Digital Tasbih</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+  /* Base and theme colors */
+  :root {
+    --bg-light: rgb(128, 128, 128);
+    --bg-dark: linear-gradient(135deg, rgb(0, 127, 0), rgb(0, 0, 127));
+    --text-light: #333;
+    --text-dark: #fff;
+    --btn-increment-light: #ffffff;
+    --btn-increment-dark: #ffffff;
+    --btn-reset-light: #707070;
+    --btn-reset-dark: #7f8c8d;
+    --btn-decrement-light: #e67e22;
+    --btn-decrement-dark: #f39c12;
+    --shadow-light: rgba(0,0,0,0.1);
+    --shadow-dark: rgba(0,0,0,0.3);
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg-dark);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+
+  body.light-theme {
+    background: var(--bg-light);
+    color: var(--text-light);
+  }
+
+  h1 {
+    font-weight: 700;
+    font-size: 3rem;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+
+  body.light-theme h1 {
+    text-shadow: none;
+  }
+
+  .counter-display {
+    font-size: 6rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 30px 60px;
+    box-shadow: 0 4px 20px var(--shadow-dark);
+    user-select: none;
+    transition: box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+    color: inherit;
+  }
+
+  body.light-theme .counter-display {
+    background: #fff;
+    box-shadow: 0 4px 20px var(--shadow-light);
+    color: var(--text-light);
+  }
+
+  .counter-display.pulse {
+    animation: pulseGlow 0.3s ease;
+    box-shadow:
+      0 0 15px 5px rgba(255, 218, 121, 0.8),
+      0 4px 20px var(--shadow-dark);
+  }
+
+  body.light-theme .counter-display.pulse {
+    box-shadow:
+      0 0 15px 5px rgba(252, 202, 70, 0.85),
+      0 4px 20px var(--shadow-light);
+  }
+
+  @keyframes pulseGlow {
+    0% {
+      transform: scale(1);
+      box-shadow:
+        0 0 15px 5px rgba(255, 218, 121, 0.8);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow:
+        0 0 25px 10px rgba(255, 218, 121, 1);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow:
+        0 0 15px 5px rgba(255, 218, 121, 0.8);
+    }
+  }
+
+  .buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  button {
+    border: none;
+    border-radius: 15px;
+    padding: 18px 34px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px #b28d3e;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    flex-grow: 1;
+    min-width: 120px;
+    user-select: none;
+  }
+
+  button:active {
+    box-shadow: 0 2px #b28d3e;
+    transform: translateY(4px);
+  }
+
+  button.increment {
+    background: var(--btn-increment-dark);
+    color: #4a3f35;
+  }
+
+  body.light-theme button.increment {
+    background: var(--btn-increment-light);
+    color: #4a3f35;
+    box-shadow: 0 6px #b28d3e;
+  }
+
+  button.reset {
+    background: var(--btn-reset-dark);
+    color: #ecf0f1;
+    box-shadow: 0 6px #565d5f;
+  }
+
+  body.light-theme button.reset {
+    background: var(--btn-reset-light);
+    color: #222;
+    box-shadow: 0 6px #545454;
+  }
+
+  button.decrement {
+    background: var(--btn-decrement-dark);
+    color: #fff;
+    box-shadow: 0 6px #b26c0b;
+  }
+
+  body.light-theme button.decrement {
+    background: var(--btn-decrement-light);
+    color: #4a3f35;
+    box-shadow: 0 6px #b1892c;
+  }
+
+  button.decrement:active {
+    box-shadow: 0 2px #b26c0b;
+  }
+
+  .instructions {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.9);
+    max-width: 400px;
+    line-height: 1.4;
+  }
+
+  body.light-theme .instructions {
+    color: #555;
+  }
+
+  .notification {
+    margin-top: 12px;
+    font-size: 1rem;
+    color: #ffef99;
+    min-height: 24px;
+    font-weight: 600;
+    min-height: 24px;
+  }
+
+  footer {
+    margin-top: 50px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.5s ease;
+  }
+
+  body.light-theme footer {
+    color: #666;
+  }
+
+  @media (max-width: 460px) {
+    .counter-display {
+      font-size: 4.5rem;
+      padding: 20px 40px;
+    }
+
+    button {
+      font-size: 1.3rem;
+      padding: 14px 24px;
+      min-width: 100px;
+    }
+  }
+
+  /* Floating settings button */
+  #settingsButton {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s ease;
+    z-index: 1000;
+  }
+
+  body.light-theme #settingsButton {
+    background: #ddd;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+
+  #settingsButton:hover,
+  #settingsButton:focus {
+    background: rgba(255, 218, 121, 0.85);
+    outline: none;
+  }
+
+  #settingsButton svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--text-dark);
+  }
+
+  body.light-theme #settingsButton svg {
+    fill: var(--text-light);
+  }
+
+  /* Settings panel */
+  #settingsPanel {
+    position: fixed;
+    top: 72px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    width: 240px;
+    padding: 16px 20px;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 1000;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  body.light-theme #settingsPanel {
+    background: #fff;
+  }
+
+  #settingsPanel.show {
+    display: flex;
+  }
+
+  #settingsPanel h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.25rem;
+    color: #333;
+  }
+
+  body.light-theme #settingsPanel h2 {
+    color: #222;
+  }
+
+  .setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  label {
+    font-size: 1rem;
+    color: #333;
+  }
+
+  body.light-theme label {
+    color: #222;
+  }
+
+  input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+  }
+
+</style>
+</head>
+<body>بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+  <h1>Digital Tasbih</h1>
+  <div class="counter-display" id="counter" aria-live="polite" aria-atomic="true" aria-label="Tasbih count">0</div>
+  <div class="buttons">
+    <button class="increment" id="incrementBtn" aria-label="Increment count">Count</button>
+    <button class="decrement" id="decrementBtn" aria-label="Decrement count">Undo</button>
+    <button class="reset" id="resetBtn" aria-label="Reset count">Reset</button>
+  </div>
+  <div class="notification" id="notification" aria-live="assertive" role="alert" aria-atomic="true"></div>
+  
+
+  <footer>Luangkan Waktumu Dengan Bertasbih</footer>
+  <h5>Made In ASSA</h5>
+
+  <button id="settingsButton" aria-label="Open settings" aria-haspopup="true" aria-expanded="false" title="Settings">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M19.14 12.936a7.999 7.999 0 0 0 0-1.872l2.036-1.59a.5.5 0 0 0 .12-.63l-1.924-3.33a.5.5 0 0 0-.6-.22l-2.4.96a7.981 7.981 0 0 0-1.62-.936l-.36-2.52a.5.5 0 0 0-.5-.42h-3.848a.5.5 0 0 0-.5.42l-.36 2.52a7.981 7.981 0 0 0-1.62.936l-2.4-.96a.5.5 0 0 0-.6.22l-1.924 3.33a.5.5 0 0 0 .12.63l2.036 1.59a7.999 7.999 0 0 0 0 1.872l-2.036 1.59a.5.5 0 0 0-.12.63l1.924 3.33a.5.5 0 0 0 .6.22l2.4-.96a7.981 7.981 0 0 0 1.62.936l.36 2.52a.5.5 0 0 0 .5.42h3.848a.5.5 0 0 0 .5-.42l.36-2.52a7.981 7.981 0 0 0 1.62-.936l2.4.96a.5.5 0 0 0 .6-.22l1.924-3.33a.5.5 0 0 0-.12-.63l-2.036-1.59zm-7.14 2.564a3.5 3.5 0 1 1 0 -7 3.5 3.5 0 0 1 0 7z"/>
+    </svg>
+  </button>
+
+  <div id="settingsPanel" role="dialog" aria-modal="true" aria-label="Settings panel" tabindex="-1">
+  <h2>Settings</h2>
+  <div class="setting-row">
+    <label for="themeToggle">Dark Theme</label>
+    <input type="checkbox" id="themeToggle" aria-describedby="themeToggleDesc" />
+  </div>
+  <div class="setting-row">
+    <label for="vibrationToggle">Vibration</label>
+    <input type="checkbox" id="vibrationToggle" aria-describedby="vibrationToggleDesc" />
+  </div>
+  <div class="setting-row">
+    <label for="languageSelect">Bahasa</label>
+    <select id="languageSelect">
+        <option value="id">Bahasa Indonesia</option>
+        <option value="en">English</option>
+    </select>
+</div>
+  <div class="setting-row">
+    <button id="likeButton">Like</button>
+  </div>
+  <a href="apa_yang_baru.html" id="whatsNewLink" style="color: #007bff; text-decoration: underline; cursor: pointer;">Apa yang Baru</a>
+  <a href="Log In.html">Keluar</a>
+
+<script>
+    const languageSelect = document.getElementById('languageSelect');
+
+// Teks dalam berbagai bahasa
+const texts = {
+    id: {
+        title: "Tasbih Digital",
+        increment: "Hitung",
+        decrement: "Hapus",
+        reset: "Ulang",
+        notificationMax: "Jumlah maksimum tercapai (100000). Silakan reset atau undo.",
+        notificationZero: "Jumlah sudah nol.",
+        footer: "Luangkan Waktumu Dengan Bertasbih",
+        madeIn: "Made In ASSA",
+        settings: "Pengaturan",
+        darkTheme: "Tema Gelap",
+        vibration: "Getaran",
+        whatsNew: "Apa yang Baru"
+    },
+    en: {
+        title: "Digital Tasbih",
+        increment: "Count",
+        decrement: "Wipe",
+        reset: "Reset",
+        notificationMax: "Maximum count reached (100000). Please reset or undo.",
+        notificationZero: "Count is already zero.",
+        footer: "Spend Your Time with Tasbih",
+        madeIn: "Made In ASSA",
+        settings: "Settings",
+        darkTheme: "Dark Theme",
+        vibration: "Vibration",
+        whatsNew: "What's New"
+    }
+};
+
+// Fungsi untuk mengubah bahasa
+function changeLanguage(lang) {
+    document.querySelector('h1').textContent = texts[lang].title;
+    incrementBtn.textContent = texts[lang].increment;
+    decrementBtn.textContent = texts[lang].decrement;
+    resetBtn.textContent = texts[lang].reset;
+    footer.textContent = texts[lang].footer;
+    document.querySelector('h5').textContent = texts[lang].madeIn;
+}
+
+// Event listener untuk perubahan bahasa
+languageSelect.addEventListener('change', (event) => {
+    changeLanguage(event.target.value);
+});
+
+// Inisialisasi bahasa default
+changeLanguage('id'); // Set default to Bahasa Indonesia
+
+</script>
+
+  <script>
+    (function() {
+      const MAX_COUNT = 100000;
+      const counterEl = document.getElementById('counter');
+      const incrementBtn = document.getElementById('incrementBtn');
+      const decrementBtn = document.getElementById('decrementBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const notificationEl = document.getElementById('notification');
+
+      const settingsButton = document.getElementById('settingsButton');
+      const settingsPanel = document.getElementById('settingsPanel');
+      const themeToggle = document.getElementById('themeToggle');
+      const vibrationToggle = document.getElementById('vibrationToggle');
+
+      let count = 0;
+      let vibrationEnabled = true;
+
+      // Load settings from localStorage or default
+      function loadSettings() {
+        const savedTheme = localStorage.getItem('dtTheme');
+        if (savedTheme === 'light') {
+          document.body.classList.add('light-theme');
+          themeToggle.checked = true;
+          settingsButton.setAttribute('aria-label', 'Open settings, dark theme enabled');
+        } else {
+          document.body.classList.remove('light-theme');
+          themeToggle.checked = false;
+          settingsButton.setAttribute('aria-label', 'Open settings, dark theme disabled');
+        }
+
+        const savedVibration = localStorage.getItem('dtVibration');
+        if (savedVibration === 'false') {
+          vibrationEnabled = false;
+          vibrationToggle.checked = false;
+        } else {
+          vibrationEnabled = true;
+          vibrationToggle.checked = true;
+        }
+      }
+
+      // Save settings to localStorage
+      function saveSettings() {
+        localStorage.setItem('dtTheme', themeToggle.checked ? 'light' : 'dark');
+        localStorage.setItem('dtVibration', vibrationToggle.checked);
+      }
+
+      function updateDisplay() {
+        counterEl.textContent = count;
+        counterEl.classList.remove('pulse');
+        // Trigger reflow to restart animation
+        void counterEl.offsetWidth;
+        counterEl.classList.add('pulse');
+      }
+
+      function vibrate(duration = 70) {
+        if (vibrationEnabled && navigator.vibrate) {
+          navigator.vibrate(duration);
+        }
+      }
+
+      function showNotification(message) {
+        notificationEl.textContent = message;
+        clearTimeout(notificationEl._timeout);
+        notificationEl._timeout = setTimeout(() => {
+          notificationEl.textContent = '';
+        }, 2500);
+      }
+
+      incrementBtn.addEventListener('click', () => {
+        if (count < MAX_COUNT) {
+          count++;
+          updateDisplay();
+          vibrate();
+          notificationEl.textContent = '';
+        } else {
+          showNotification('Maximum count reached (100000). Please reset or undo.');
+        }
+      });
+
+      decrementBtn.addEventListener('click', () => {
+        if (count > 0) {
+          count--;
+          updateDisplay();
+          vibrate();
+          notificationEl.textContent = '';
+        } else {
+          showNotification('Count is already zero.');
+        }
+      });
+
+      resetBtn.addEventListener('click', () => {
+        count = 0;
+        updateDisplay();
+        vibrate();
+        notificationEl.textContent = '';
+      });
+
+      // Toggle settings panel open/close
+      function toggleSettingsPanel() {
+        const isShown = settingsPanel.classList.toggle('show');
+        settingsButton.setAttribute('aria-expanded', isShown);
+        if (isShown) {
+          settingsPanel.focus();
+        }
+      }
+
+      settingsButton.addEventListener('click', function() {
+        toggleSettingsPanel();
+      });
+
+      // Close settings panel when clicking outside or pressing Escape
+      document.addEventListener('click', (event) => {
+        if (!settingsPanel.contains(event.target) && !settingsButton.contains(event.target)) {
+          if (settingsPanel.classList.contains('show')) {
+            settingsPanel.classList.remove('show');
+            settingsButton.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && settingsPanel.classList.contains('show')) {
+          settingsPanel.classList.remove('show');
+          settingsButton.setAttribute('aria-expanded', 'false');
+          settingsButton.focus();
+        }
+      });
+
+      // Theme toggle change
+      themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) {
+          document.body.classList.add('light-theme');
+        } else {
+          document.body.classList.remove('light-theme');
+        }
+        saveSettings();
+      });
+
+      // Vibration toggle change
+      vibrationToggle.addEventListener('change', () => {
+        vibrationEnabled = vibrationToggle.checked;
+        saveSettings();
+      });
+
+      // Initialize
+      loadSettings();
+      updateDisplay();
+
+    })();
+  </script>
+</body>
+</html>
